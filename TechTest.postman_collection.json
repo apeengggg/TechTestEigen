@@ -1,0 +1,174 @@
+{
+	"info": {
+		"_postman_id": "e6532eeb-c5a4-4474-83c1-4f1081927f4b",
+		"name": "TechTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14751088",
+		"_collection_link": "https://universal-water-753165.postman.co/workspace/c6e93948-7533-4df9-975b-3645e0a06ddf/collection/14751088-e6532eeb-c5a4-4474-83c1-4f1081927f4b?action=share&source=collection_link&creator=14751088"
+	},
+	"item": [
+		{
+			"name": "Check members",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/v1/members/all?order_by=member_id&order_dir=asc&per_page=10&page=1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"members",
+						"all"
+					],
+					"query": [
+						{
+							"key": "member_code",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "member_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "order_by",
+							"value": "member_id"
+						},
+						{
+							"key": "order_dir",
+							"value": "asc"
+						},
+						{
+							"key": "per_page",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/v1/books/all?order_by=book_id&order_dir=asc&per_page=10&page=1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"books",
+						"all"
+					],
+					"query": [
+						{
+							"key": "book_code",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "book_title",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "book_author",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "order_by",
+							"value": "book_id"
+						},
+						{
+							"key": "order_dir",
+							"value": "asc"
+						},
+						{
+							"key": "per_page",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrow Book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"member_id\" : 1,\r\n  \"books\": [\r\n    {\r\n      \"book_id\": 1\r\n    },\r\n    {\r\n      \"book_id\": 5\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/v1/books/borrow",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"books",
+						"borrow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Return Book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"member_id\" : 1,\r\n  \"books\": [\r\n    {\r\n      \"book_id\": 1\r\n    },\r\n    {\r\n      \"book_id\": 1\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/v1/books/return",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"books",
+						"return"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
