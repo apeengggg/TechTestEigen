@@ -1,18 +1,18 @@
 const { db, getTotalRows } = require('../helper/DBUtils')
 
-const getAllMemberBookedBooks = async (param) => {
+const getAllMemberBorrowBooks = async (param) => {
 
     let queryParams = []
 
     let query = 
         ' SELECT ' + 
         '   m.member_id, m.member_code, m.member_name ' +
-        '   ,count(bb.booked_id) as "borrowed_books" ' +
+        '   ,count(bb.borrow_id) as "borrowed_books" ' +
         ' FROM ' + 
         '   tb_m_members m ' + 
         ' LEFT JOIN ' +  
-        '   tb_r_booked_books bb ON m.member_id = bb.member_id ' +
-        ' WHERE 1=1 '
+        '   tb_r_borrow_books bb ON m.member_id = bb.member_id ' +
+        ' WHERE 1=1 and bb.return_date is null '
 
     // dynamic condition and parameters
     if(param.member_code && param.member_code != "") {
@@ -71,4 +71,4 @@ const getAllMemberBookedBooks = async (param) => {
     }    
 }
 
-module.exports = { getAllMemberBookedBooks }
+module.exports = { getAllMemberBorrowBooks }

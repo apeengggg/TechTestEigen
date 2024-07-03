@@ -13,7 +13,7 @@ const getAllBooks = async (param) => {
         '   ( ' +
         '       SELECT book_id, COUnt(*) as "borrowed_count" ' +
         '       FROM ' +
-        '       tb_r_booked_books ' +
+        '       tb_r_borrow_books ' +
         '       WHERE return_date IS NULL ' +
         '       GROUP BY book_id ' +
         '   ) rb ' +
@@ -85,4 +85,95 @@ const getAllBooks = async (param) => {
     }    
 }
 
-module.exports = { getAllBooks }
+const checkBorrowBookMember = async (param) => {
+console.log("🚀 ~ checkBorrowBookMember ~ param:", param)
+
+    let queryParams = []
+
+    queryParams.push(param.book_id)
+
+    let select_query = 
+    ' SELECT ' + 
+    ' m.member_id, m.penalized_end, b.book_title, ' +
+    ' CAST(( ' + 
+    '   SELECT COUNT(book_id) FROM ' + 
+    '   tb_r_borrow_books bb ' +  
+    '   LEFT JOIN tb_m_members m2 ON bb.member_id = m2.member_id WHERE ' +
+    '   bb.return_date IS NULL AND m2.member_id = m.member_id ' +
+    ' ) AS INT) as member_borrow, ' +
+    ' CAST(( ' +
+    '   SELECT COUNT(book_id) FROM ' +
+    '   tb_r_borrow_books bb1' +
+    '   LEFT JOIN tb_m_members m3 ON bb1.member_id = m3.member_id WHERE ' +
+    `   bb1.return_date IS NULL AND m3.member_id IS NOT NULL `
+    
+    queryParams.push(param.member_id)
+    select_query = select_query + ` AND (m3.member_id <> m.member_id OR m3.member_id = $${queryParams.length})`
+    
+    queryParams.push(param.book_id)
+    select_query = select_query + ` AND bb1.book_id = $${queryParams.length} `
+    
+    select_query = select_query + ' ) AS INT) as other_member_borrow ' +
+    ' FROM tb_m_members m ' +
+    ' LEFT JOIN tb_r_borrow_books bb2  ' +
+    ' ON m.member_id = bb2.member_id  ' +
+    ' LEFT JOIN tb_m_books b  ' +
+    ' ON bb2.book_id = b.book_id  ' +
+    ' WHERE 1=1'
+
+    queryParams.push(param.member_id)
+    select_query = select_query + ` AND m.member_id = $${queryParams.length}`
+
+
+    let query = select_query
+    // dynamic condition and parameters
+
+    console.log('query', query)
+    // console.log('queryParams', queryParams)
+    
+    const result = await db.manyOrNone(query, queryParams)
+    return { 
+        result
+    }    
+}
+
+const checkBookAndMemberExists = async (param) => {
+
+    let queryParams = []
+    let query = 'SELECT '
+    queryParams.push(param.member_id)
+    query = query + `(SELECT member_id FROM tb_m_members WHERE member_id = $${queryParams.length}) as member_id`
+    for(let i in param.books){
+        queryParams.push(param.books[i].book_id)
+        query = query + ` ,(SELECT book_id FROM tb_m_books WHERE book_id = $${queryParams.length}) as book_id_${i} `
+
+    }
+    // dynamic condition and parameters
+
+    // console.log('query', query)
+    // console.log('queryParams', queryParams)
+    
+    const result = await db.manyOrNone(query, queryParams)
+    return { 
+        result
+    }    
+}
+
+const borrowBook = async (param) => {
+    
+    let query =
+    ' INSERT INTO tb_r_borrow_books (' 
+    + '   member_id, book_id, borrow_end '
+    + '   ) VALUES ' 
+    + '('
+    + '   ${member_id}, '
+    + '   ${book_id}, '
+    + '   ${borrow_end} '
+    + ')';
+    
+    // console.log("🚀 ~ borrowBook ~ query:", query)
+
+    await db.none(query, param);
+}
+
+module.exports = { getAllBooks, checkBorrowBookMember, checkBookAndMemberExists, borrowBook }

@@ -10,6 +10,17 @@ const getAllBooks = Joi.object().keys({
     page: Joi.number().allow("", null).optional()
 }).unknown(true)
 
+const bookingBook = Joi.object().keys({
+    member_id: Joi.number().required(),
+    books: Joi.array().min(1).items(
+        Joi.object({
+        book_id: Joi.number().required(),
+        borrow_end: Joi.string().isoDate().required()
+        })
+    ).required()
+}).unknown(true)
+
 module.exports = { 
-    getAllBooks
+    getAllBooks,
+    bookingBook
 }
