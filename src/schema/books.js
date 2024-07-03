@@ -10,17 +10,26 @@ const getAllBooks = Joi.object().keys({
     page: Joi.number().allow("", null).optional()
 }).unknown(true)
 
-const bookingBook = Joi.object().keys({
+const borrowBook = Joi.object().keys({
     member_id: Joi.number().required(),
     books: Joi.array().min(1).items(
         Joi.object({
-        book_id: Joi.number().required(),
-        borrow_end: Joi.string().isoDate().required()
+        book_id: Joi.number().required()
+        })
+    ).required()
+}).unknown(true)
+
+const returnBook = Joi.object().keys({
+    member_id: Joi.number().required(),
+    books: Joi.array().min(1).items(
+        Joi.object({
+        book_id: Joi.number().required()
         })
     ).required()
 }).unknown(true)
 
 module.exports = { 
     getAllBooks,
-    bookingBook
+    borrowBook,
+    returnBook
 }

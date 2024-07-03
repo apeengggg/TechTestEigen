@@ -12,7 +12,7 @@ const getAllMemberBorrowBooks = async (param) => {
         '   tb_m_members m ' + 
         ' LEFT JOIN ' +  
         '   tb_r_borrow_books bb ON m.member_id = bb.member_id ' +
-        ' WHERE 1=1 and bb.return_date is null '
+        ' WHERE 1=1 and bb.borrow_end is null '
 
     // dynamic condition and parameters
     if(param.member_code && param.member_code != "") {
