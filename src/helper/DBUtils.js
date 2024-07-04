@@ -33,7 +33,7 @@ const getTotalRows = async (innerQuery, queryParams, dbParam) => {
     } else {
         totalRows = await db.one(countQuery, queryParams)        
     }
-    return totalRows.count
+    return parseInt(totalRows.count)
 }
 
 module.exports = { db, getTotalRows }

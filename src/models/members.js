@@ -59,7 +59,7 @@ const getAllMemberBorrowBooks = async (param) => {
     // console.log('query', query)
     // console.log('query params', queryParams)
     
-    const result = await db.manyOrNone(query, queryParams)
+    const result = await db.query(query, queryParams)
 
     let totalPages = Math.ceil(totalRows / param.per_page)
 

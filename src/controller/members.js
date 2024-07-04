@@ -10,7 +10,7 @@ class MembersControllser {
             const result = await getAllMemberBorrowBooks(param)
             console.log("🚀 ~ MembersControllser ~ getMemberBorrowedBooks ~ result:", result)
             let msg = 'Data found'
-            if(result.length == 0) {
+            if(result.result.length == 0) {
                 msg = 'Data not found'
             }
             Ok(res, msg, result)

@@ -70,7 +70,7 @@ const getAllBooks = async (param) => {
     // console.log('query', query)
     // console.log('query params', queryParams)
     
-    const result = await db.manyOrNone(query, queryParams)
+    const result = await db.query(query, queryParams)
 
     let totalPages = Math.ceil(totalRows / param.per_page)
 
@@ -128,7 +128,7 @@ console.log("🚀 ~ checkBorrowBookMember ~ param:", param)
     console.log('query', query)
     // console.log('queryParams', queryParams)
     
-    const result = await db.manyOrNone(query, queryParams)
+    const result = await db.query(query, queryParams)
     return { 
         result
     }    
@@ -150,7 +150,7 @@ const checkBookAndMemberExists = async (param) => {
     // console.log('query', query)
     // console.log('queryParams', queryParams)
     
-    const result = await db.manyOrNone(query, queryParams)
+    const result = await db.query(query, queryParams)
     return { 
         result
     }    
@@ -206,7 +206,7 @@ const checkBorrowedBook = async (param) => {
     queryParams.push(param.book_id)
     query = query + `AND bb.book_id = $${queryParams.length} and bb.borrow_end is null`
     
-    const result = await db.manyOrNone(query, queryParams)
+    const result = await db.query(query, queryParams)
     return { 
         result
     }    
