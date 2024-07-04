@@ -7,10 +7,8 @@ const { errors } = require('celebrate');
 
 const routes = require('./src/routes');
 const { InfoFilter } = require('./src/middleware/RequestFilter');
-const logger = require('./src/helper/LoggerUtils');
 
 const app = express();
-const port = process.env.SERVER_PORT || 3000;
 
 app.use(cors());
 app.use(BodyParser.json({ limit: '50mb' }));
@@ -30,6 +28,4 @@ app.use('/api/v1', routes);
 // register error handler from Joi->Celebrate
 app.use(errors());
 
-app.listen(port, () => {
-    logger.info(`Server started, listening on port ${port}!`);
-});
+module.exports = app
