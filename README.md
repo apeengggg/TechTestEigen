@@ -5,4 +5,4 @@ Technical Test PT. Eigen Tri Mathema
 4. Setup .env
 5. Install with npm install
 6. Run api with npm run dev
-7. Run Test with ...
+7. Run Test with npm test
