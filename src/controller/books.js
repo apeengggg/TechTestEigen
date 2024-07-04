@@ -9,9 +9,8 @@ class BooksController {
         const param = req.query
         try {
             const result = await getAllBooks(param)
-            console.log("🚀 ~ BooksController ~ getAllBooks ~ result:", result)
             let msg = 'Data found'
-            if(result.length == 0) {
+            if(result.result.length == 0) {
                 msg = 'Data not found'
             }
             Ok(res, msg, result)
@@ -23,7 +22,6 @@ class BooksController {
 
     async borrowBook(req, res) {
         const param = req.body
-        // console.log("🚀 ~ BooksController ~ borrowBook ~ param:", param)
         try {
             if(param.books.length > 2){
                 return BadRequest(res, "Member may not borrow more than 2 books")
@@ -54,15 +52,13 @@ class BooksController {
                 }
 
                 const check = await checkBorrowBookMember(param_check_book)
-                // console.log("🚀 ~ BooksController ~ borrowBook ~ check:", check)
                 if(check.result.length > 0){
                     const data = check.result[0]
-                    // console.log("🚀 ~ BooksController ~ borrowBook ~ data:", data)
                     if(data.member_borrow >= 2){
                         return BadRequest(res, "Member currently already borrow 2 books, member may not borrow more than 2 books")
                     }else{
                         if((param.books.length + data.member_borrow) > 2){
-                            return BadRequest(res, `Member currently already borrow ${data.member_borrow}  book, member can only borrow ${2-data.member_borrow} more book `)
+                            return BadRequest(res, `Member currently already borrow ${data.member_borrow} book, member can only borrow ${2-data.member_borrow} more book`)
                         }
                     }
 
@@ -93,38 +89,42 @@ class BooksController {
 
     async returnBook(req, res) {
         const param = req.body
-        // console.log("🚀 ~ BooksController ~ returnBook ~ param:", param)
         try {
             let booked_book = []
             
             for(let i in param.books){
                 const check_borrowed_book = await checkBorrowedBook({member_id: param.member_id, book_id: param.books[i].book_id})
-                // console.log("🚀 ~ BooksController ~ returnBook ~ check_borrowed_book:", check_borrowed_book)
                 if(check_borrowed_book.result.length == 0){
                     return BadRequest(res, "There are books that are not borrowed by member")
                 }else{
                     booked_book.push(check_borrowed_book.result[0])
                 }
             }
+
+            let is_being_penalized = false
+            let penalized_end = moment().add(7, 'days').format('YYYY-MM-DD')
             
             for(let i in booked_book){
                 let return_date = moment(new Date(), 'YYYY-MM-DD')
-                // console.log("🚀 ~ BooksController ~ returnBook ~ return_date:", return_date)
                 let borrow_date = moment(booked_book[i].borrow_start, 'YYYY-MM-DD')
-                // console.log("🚀 ~ BooksController ~ returnBook ~ borrow_date:", borrow_date)
 
                 let diffDays = return_date.diff(borrow_date, 'days');
                 let is_penalized = diffDays > 7 ? true : false
-                // console.log("🚀 ~ BooksController ~ returnBook ~ diffDays:", diffDays)
                 
                 let penalized_end = is_penalized ? moment().add(7, 'days').format('YYYY-MM-DD') : null
-                // console.log("🚀 ~ BooksController ~ returnBook ~ penalized_end:", penalized_end)
+
+                if(is_penalized){
+                    is_being_penalized = true
+                }
 
                 await returningBook({member_id: booked_book[i].member_id, book_id: booked_book[i].book_id, penalized_end: penalized_end, return_date: moment(new Date()).format('YYYY-MM-DD')})
             }
 
             
             let msg = 'Member Succes Return Book'
+            if(is_being_penalized){
+                msg += ', Member is currently being penalized until '+ moment(penalized_end).format('DD MMMM YYYY')
+            }
             Ok(res, msg, [])
         } catch(err) {
             logger.error('BooksController.returnBook', err)

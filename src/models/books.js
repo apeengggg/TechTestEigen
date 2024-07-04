@@ -36,8 +36,6 @@ const getAllBooks = async (param) => {
         query = query + ` AND lower(b.book_author) = $${queryParams.length} `        
     }
 
-    console.log('query', query)
-
     // dynamic order
     if(param.order_by && param.order_by != "") {
         let dir = 'asc'
@@ -52,7 +50,6 @@ const getAllBooks = async (param) => {
 
     // get total rows
     let totalRows = await getTotalRows(query, queryParams)
-    // console.log('total rows', totalRows)
 
     // limit and paging and such
     let limit = 10
@@ -65,10 +62,7 @@ const getAllBooks = async (param) => {
         offset = limit * (param.page - 1)
     }
 
-    query = query + ` LIMIT ${limit} OFFSET ${offset} `    
-
-    // console.log('query', query)
-    // console.log('query params', queryParams)
+    query = query + ` LIMIT ${limit} OFFSET ${offset} `
     
     const result = await db.query(query, queryParams)
 
@@ -83,7 +77,6 @@ const getAllBooks = async (param) => {
 }
 
 const checkBorrowBookMember = async (param) => {
-console.log("🚀 ~ checkBorrowBookMember ~ param:", param)
 
     let queryParams = []
 
@@ -124,9 +117,6 @@ console.log("🚀 ~ checkBorrowBookMember ~ param:", param)
 
     let query = select_query
     // dynamic condition and parameters
-
-    console.log('query', query)
-    // console.log('queryParams', queryParams)
     
     const result = await db.query(query, queryParams)
     return { 
@@ -146,9 +136,6 @@ const checkBookAndMemberExists = async (param) => {
 
     }
     // dynamic condition and parameters
-
-    // console.log('query', query)
-    // console.log('queryParams', queryParams)
     
     const result = await db.query(query, queryParams)
     return { 
@@ -166,14 +153,11 @@ const borrowBook = async (param) => {
     + '   ${member_id}, '
     + '   ${book_id} '
     + ')';
-    
-    // console.log("🚀 ~ borrowBook ~ query:", query)
 
     await db.none(query, param);
 }
 
 const returningBook = async (param) => {
-    console.log("🚀 ~ returningBook ~ param:", param)
     
     let paramsQuery = []
     let query = 'UPDATE tb_r_borrow_books ' + 
@@ -181,9 +165,6 @@ const returningBook = async (param) => {
     'WHERE member_id = ${member_id} ' +
     'AND book_id = ${book_id} ' +
     'AND borrow_end IS NULL '
-    // console.log("🚀 ~ returningBook ~ paramsQuery:", paramsQuery)
-
-    // console.log("🚀 ~ returningBook ~ query:", query)
 
     await db.none(query, param);
     

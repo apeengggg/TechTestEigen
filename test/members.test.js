@@ -1,14 +1,8 @@
 const request = require('supertest')
 const app = require('../app')
 const {db} = require('../src/helper/DBUtils')
-const {dbBeforeEach, dbAfterEach, dbBeforeAll} = require('../src/helper/TestUtils')
 
-
-beforeAll(dbBeforeAll)
-beforeEach(dbBeforeEach)
-afterEach(dbAfterEach)
-
-describe('Members', () => {
+describe('/members', () => {
   test('/all with returning data members', async () => {
     const res = await request(app).get('/api/v1/members/all?page=1&per_page=5&order_by=member_id&order_dir=asc')
     const data = res._body

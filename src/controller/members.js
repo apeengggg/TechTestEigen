@@ -8,7 +8,6 @@ class MembersControllser {
         const param = req.query
         try {
             const result = await getAllMemberBorrowBooks(param)
-            console.log("🚀 ~ MembersControllser ~ getMemberBorrowedBooks ~ result:", result)
             let msg = 'Data found'
             if(result.result.length == 0) {
                 msg = 'Data not found'
